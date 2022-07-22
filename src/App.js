@@ -1,7 +1,7 @@
-import Home from './components/Home'
+import Validation from './components/Validation'
 
 import './App.css'
 
-const App = () => <Home />
+const App = () => <Validation />
 
 export default App

@@ -2,7 +2,7 @@ import {Component} from 'react'
 
 import './index.css'
 
-class Home extends Component {
+class Validation extends Component {
   state = {
     name: '',
     email: '',
@@ -204,4 +204,4 @@ class Home extends Component {
   }
 }
 
-export default Home
+export default Validation
