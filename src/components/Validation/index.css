@@ -85,3 +85,12 @@
   border: 1px solid #d7dfe9;
   border-radius: 2px;
 }
+
+.invalid {
+  border: 1px solid red !important;
+}
+input,
+textarea {
+  outline: none !important;
+  box-shadow: none !important;
+}

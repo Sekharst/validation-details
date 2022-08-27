@@ -1,147 +1,184 @@
 import './index.css'
-import React, {useState} from 'react'
 
-const Validation = () => {
-  const [data, setData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    status: 'Active',
-    gender: 'Male',
-  })
-  const {name, email, password, confirmPassword} = data
-  const changeHandler = e => {
-    setData({...data, [e.target.name]: e.target.value})
-  }
+import {useForm} from 'react-hook-form'
 
-  const submitForm = event => {
-    event.preventDefault()
-    if (name.length <= 5) {
-      alert('name must be at least 5 character')
-    } else if (password.length <= 6) {
-      alert('password to short')
-    } else if (password !== confirmPassword) {
-      alert('Passwords are not matching')
-    } else if (/\S+@\S+\.\S+/.test(email) === false) {
-      alert('email is invalid')
-    } else {
+function Validation() {
+  const {
+    register,
+    handleSubmit,
+    // changeHandler,
+    formState: {errors},
+    reset,
+    trigger,
+    match,
+  } = useForm()
+
+  const onSubmit = data => {
+    trigger('name', 'email', 'Password', 'phone')
+    if (data.password === data.confirmPassword) {
       console.log(data)
+      reset()
+    } else {
+      alert('Passwords are not matching')
     }
   }
 
-  return (
-    <>
-      <div>
-        <div className="app-container">
-          <div className="home-container">
-            <h1 className="message">Submit Details</h1>
-            <div className="container">
-              <form id="myForm" onSubmit={submitForm}>
-                <div className="input-container">
-                  <label className="input-label" htmlFor="name">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    className="name-input-field"
-                    value={name}
-                    onChange={changeHandler}
-                    id="name"
-                    name="name"
-                    placeholder="name"
-                  />
-                </div>
-                <div className="input-container">
-                  <label htmlFor="email" className="input-label">
-                    Email
-                  </label>
-                  <input
-                    type="text"
-                    className="name-input-field"
-                    value={email}
-                    id="email"
-                    name="email"
-                    onChange={changeHandler}
-                    placeholder="Email"
-                  />
-                  {/* {email ? null : <p className="error-message">Requiered*</p>} */}
-                </div>
-                <div className="input-container">
-                  <label htmlFor="password" className="input-label">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    className="name-input-field"
-                    value={password}
-                    id="password"
-                    name="password"
-                    onChange={changeHandler}
-                    placeholder="password"
-                  />
-                </div>
-                <div className="input-container">
-                  <label htmlFor="password" className="input-label">
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    className="name-input-field"
-                    value={confirmPassword}
-                    id="password"
-                    name="confirmPassword"
-                    onChange={changeHandler}
-                    placeholder="password"
-                  />
-                  {/* {password !== confirmPassword ? (
-                    <p className="error-message">Passwords are not matching</p>
-                  ) : null} */}
-                </div>
-                <div className="input-container">
-                  <label className="input-label" htmlFor="status">
-                    Working Status
-                  </label>
-                  <select
-                    onChange={changeHandler}
-                    className="form-control"
-                    name="status"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-                <div>
-                  <h1 className="input-label">Gender</h1>
+  // console.log(watch());
 
-                  <label htmlFor="genderMale">
-                    <input
-                      type="radio"
-                      name="gender"
-                      onChange={changeHandler}
-                      value="Male"
-                      checked
-                    />
-                    Male
-                  </label>
+  // console.log(errors.name)
+
+  return (
+    <div>
+      <div className="app-container">
+        <div className="home-container">
+          <div className="col-sm-6 shadow round pb-3">
+            <h1 className="message">Submit Details</h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="input-container">
+                <label className="input-label" htmlFor="name">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  className={`name-input-field ${errors.name && 'invalid'}`}
+                  {...register('name', {required: 'Name is Required'})}
+                  id="name"
+                  name="name"
+                  placeholder="name"
+                />
+                {errors.name && (
+                  <small className="error-message">{errors.name.message}</small>
+                )}
+              </div>
+
+              <div className="input-container">
+                <label htmlFor="email" className="input-label">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  className={`name-input-field ${errors.email && 'invalid'}`}
+                  {...register('email', {
+                    required: 'Email is Required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address',
+                    },
+                  })}
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                />
+                {errors.email && (
+                  <small className="error-message">
+                    {errors.email.message}
+                  </small>
+                )}
+              </div>
+              <div className="input-container">
+                <label htmlFor="email" className="input-label">
+                  Phone number
+                </label>
+
+                <input
+                  type="text"
+                  className={`name-input-field ${errors.phone && 'invalid'}`}
+                  {...register('phone', {
+                    required: 'Phone is Required',
+                    pattern: {
+                      value: /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+                      message: 'Invalid phone no',
+                    },
+                  })}
+                  id="phone"
+                  name="phone"
+                  placeholder="Phone Number"
+                />
+                {errors.phone && (
+                  <small className="error-message">
+                    {errors.phone.message}
+                  </small>
+                )}
+              </div>
+              <div className="input-container">
+                <label htmlFor="password" className="input-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="password"
+                  className={`name-input-field ${errors.password && 'invalid'}`}
+                  {...register('password', {required: 'Password is Required'})}
+                />
+                {errors.password && (
+                  <small className="error-message">
+                    {errors.password.message}
+                  </small>
+                )}
+              </div>
+              <div className="input-container">
+                <label htmlFor="password" className="input-label">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  className="name-input-field"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="password"
+                  {...register('confirmPassword')}
+                />
+                {match && (
+                  <small className="error-message">Password not matched</small>
+                )}
+              </div>
+              <div className="input-container">
+                <label className="input-label" htmlFor="status">
+                  Working Status
+                </label>
+
+                <select
+                  {...register('status')}
+                  className="form-control"
+                  name="status"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+              <div>
+                <h1 className="input-label">Gender</h1>
+
+                <label htmlFor="genderMale">
                   <input
+                    {...register('gender')}
                     type="radio"
                     name="gender"
-                    id="genderFemale"
-                    value="Female"
-                    onChange={changeHandler}
+                    value="Male"
+                    checked
                   />
-                  <label htmlFor="genderFemale">Female</label>
-                </div>
-                <button type="submit" className="login-button">
-                  Submit
-                </button>
-              </form>
-            </div>
+                  Male
+                </label>
+                <input
+                  {...register('gender')}
+                  type="radio"
+                  name="gender"
+                  id="genderFemale"
+                  value="Female"
+                />
+                <label htmlFor="genderFemale">Female</label>
+              </div>
+
+              <button type="submit" className="login-button">
+                Submit
+              </button>
+            </form>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
